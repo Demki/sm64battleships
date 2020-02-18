@@ -1,0 +1,12 @@
+#board {
+  display:grid;
+  grid-template-columns: repeat(10, max-content);
+  grid-auto-rows: 1fr;
+  gap: 2px;
+}
+
+#board > div {
+  border: 1px solid black;
+  padding: 2px;
+  user-select: none;
+}
