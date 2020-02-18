@@ -31,7 +31,7 @@ const starCounts = [
 ]
 
 const ITEM_CLASS = "item";
-const MAX_COUNT = 2;
+const MAX_COUNT = 3;
 const MIN_COUNT = -1;
 
 function starsFor([name, count]) {

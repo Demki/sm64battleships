@@ -29,3 +29,7 @@
 *[data-count="2"]{
   background-color: red;
 }
+
+*[data-count="3"]{
+  background-color: orange;
+}
