@@ -9,4 +9,23 @@
   border: 1px solid black;
   padding: 2px;
   user-select: none;
+  text-align: center;
+}
+
+#board > div > * {
+  background-color: white;
+  pointer-events: none;
+}
+
+
+*[data-count="-1"]{
+  background-color: blue;
+}
+
+*[data-count="1"]{
+  background-color: black;
+}
+
+*[data-count="2"]{
+  background-color: red;
 }

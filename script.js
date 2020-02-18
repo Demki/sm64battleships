@@ -30,8 +30,12 @@ const starCounts = [
   ["MIPS", 2],
 ]
 
+const ITEM_CLASS = "item";
+const MAX_COUNT = 2;
+const MIN_COUNT = -1;
+
 function starsFor([name, count]) {
-  return Array.from({length: count}, (_, i) => ({star: name, starNumber: i+1}));
+  return Array.from({ length: count }, (_, i) => ({ star: name, starNumber: i + 1 }));
 }
 
 const starList = starCounts.flatMap(starsFor);
@@ -46,7 +50,35 @@ function htmlToElement(html) {
 window.addEventListener("load", () => {
   const board = document.getElementById("board");
   starList.forEach(x => {
-    board.appendChild(htmlToElement(`<div><div>${x.star} ${x.starNumber}</div></div>`))
+    board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><span>${x.star} ${x.starNumber}</div></div>`))
   })
-  board.addEventListener("click", () => {});
+  board.addEventListener("click", onMark(1));
+  board.addEventListener("contextmenu", onMark(-1));
 });
+
+/**
+ * @returns {(ev : MouseEvent) => Boolean}
+ */
+function onMark(c) {
+  return (ev) => {
+    const target = ev.target;
+    if (target.classList.contains(ITEM_CLASS)) {
+      mark(c, target);
+      ev.preventDefault();
+    return false;
+
+    }
+  }
+}
+
+/**
+ * @param {number} c
+ * @param {HTMLElement} target
+ */
+function mark(c, target) {
+  if (!("count" in target.dataset)) target.dataset.count = 0;
+  const cnt = parseInt(target.dataset.count);
+  if ((c > 0 && cnt < MAX_COUNT) || (c < 0 && cnt > MIN_COUNT)) {
+    target.dataset.count = cnt + c;
+  }
+}
