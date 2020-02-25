@@ -47,6 +47,21 @@ function htmlToElement(html) {
   return template.content.firstChild;
 }
 
+function randomize(rand, orig, list) {
+  const arr = Array.from(orig);
+  if (rand) {
+    shuffle(rand, arr);
+  }
+  arr.forEach(x => list.removeChild(x));
+  arr.forEach(x => list.appendChild(x));
+}
+
+function randFromSeed(seed) {
+  if (!seed) return null;
+  const seedF = xmur3(seed);
+  return sfc32(seedF(), seedF(), seedF(), seedF());
+}
+
 window.addEventListener("load", () => {
   const board = document.getElementById("board");
   starList.forEach(x => {
@@ -54,6 +69,33 @@ window.addEventListener("load", () => {
   })
   board.addEventListener("click", onMark(1));
   board.addEventListener("contextmenu", onMark(-1));
+
+  const seedText = document.getElementById("seedText");
+  const orig = Array.from(board.children);
+  document.getElementById("genSeedButton").addEventListener("click", () => {
+    const seed = generateId(10);
+    const rand = randFromSeed(seed);
+    seedText.value = seed;
+    randomize(rand, orig, board);
+  });
+  document.getElementById("setSeedButton").addEventListener("click", () => {
+    const seed = seedText.value;
+    const rand = randFromSeed(seed);
+    randomize(rand, orig, board);
+  });
+
+  document.getElementById("colCount").value = 10;
+
+  document.getElementById("colCount").addEventListener("change", ({ target }) => {
+    document.body.style.setProperty("--columns", target.value);
+  });
+
+  const nightBtn = document.getElementById("nightBtn");
+  if (nightBtn) nightBtn.addEventListener("click", toggleNightMode);
+
+  nightMode = localStorage.getItem("nightMode") === "true";
+  if (nightMode) document.body.classList.add("nightMode");
+
 });
 
 /**
@@ -65,7 +107,7 @@ function onMark(c) {
     if (target.classList.contains(ITEM_CLASS)) {
       mark(c, target);
       ev.preventDefault();
-    return false;
+      return false;
 
     }
   }
@@ -80,5 +122,20 @@ function mark(c, target) {
   const cnt = parseInt(target.dataset.count);
   if ((c > 0 && cnt < MAX_COUNT) || (c < 0 && cnt > MIN_COUNT)) {
     target.dataset.count = cnt + c;
+  }
+}
+
+let nightMode = false;
+
+function toggleNightMode() {
+  if (nightMode) {
+    nightMode = false;
+    localStorage.setItem("nightMode", nightMode);
+    document.body.classList.remove("nightMode");
+  }
+  else {
+    nightMode = true;
+    localStorage.setItem("nightMode", nightMode);
+    document.body.classList.add("nightMode");
   }
 }
