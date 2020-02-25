@@ -47,6 +47,14 @@ function htmlToElement(html) {
   return template.content.firstChild;
 }
 
+function shuffle(rand, a) {
+  for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function randomize(rand, orig, list) {
   const arr = Array.from(orig);
   if (rand) {
@@ -56,10 +64,14 @@ function randomize(rand, orig, list) {
   arr.forEach(x => list.appendChild(x));
 }
 
+function generateId (len) {
+  var arr = new Uint8Array(Math.ceil((len || 40) * 3 / 4));
+  window.crypto.getRandomValues(arr);
+  return base64js.fromByteArray(arr).substring(0,len);
+}
+
 function randFromSeed(seed) {
-  if (!seed) return null;
-  const seedF = xmur3(seed);
-  return sfc32(seedF(), seedF(), seedF(), seedF());
+  return seed ? new Math.seedrandom(seed) : null;
 }
 
 window.addEventListener("load", () => {
@@ -73,10 +85,10 @@ window.addEventListener("load", () => {
   const seedText = document.getElementById("seedText");
   const orig = Array.from(board.children);
   document.getElementById("genSeedButton").addEventListener("click", () => {
-    const seed = generateId(10);
-    const rand = randFromSeed(seed);
+    const seed = generateId(10)
+    const rng = randFromSeed(seed);
     seedText.value = seed;
-    randomize(rand, orig, board);
+    randomize(rng, orig, board);
   });
   document.getElementById("setSeedButton").addEventListener("click", () => {
     const seed = seedText.value;
