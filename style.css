@@ -1,6 +1,6 @@
 body {
   --background: hsl(0, 0%, 100%);
-  --backgroundLowOp: hsla(0, 0%, 100%, 0.9);
+  --backgroundLowOp: hsla(0, 0%, 100%, 0.733);
   --foreground: hsl(0, 0%, 0%);
 
   --midColor: hsl(0, 0%, 50%);
