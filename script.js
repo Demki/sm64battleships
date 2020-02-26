@@ -74,29 +74,30 @@ function randFromSeed(seed) {
   return seed ? new Math.seedrandom(seed) : null;
 }
 
+function starText({ star, starNumber }) {
+  switch (star) {
+    case "BITSKY":
+      return "Sky";
+    case "BITDW":
+      return "DW";
+    case "BITFS":
+      return "FS";
+    default:
+      return `${starNumber}`;
+  }
+}
+
 window.addEventListener("load", () => {
   const board = document.getElementById("board");
   const style = document.createElement("style");
   document.head.appendChild(style);
   const sheet = style.sheet;
-  starCounts.forEach(([name,_]) => {
-    sheet.insertRule(`.${name} { background-image: url("img/${name}.png"); background-size: cover; width: 30px; height: 30px; }`,0);
+  starCounts.forEach(([name, _]) => {
+    sheet.insertRule(`.${name} { background-image: url("img/${name}.png"); }`, 0);
   });
 
   starList.forEach(x => {
-    switch (x.star) {
-      case "BITSKY":
-        board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}">Sky</div></div>`))
-        break;
-      case "BITDW":
-        board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}">DW</div></div>`))
-        break;
-      case "BITFS":
-        board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}">FS</div></div>`))
-        break;
-      default:
-        board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}">${x.starNumber}</div></div>`))
-    }
+    board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}"><span>${starText(x)}</span></div></div>`))
   })
   board.addEventListener("click", onMark(1));
   board.addEventListener("contextmenu", onMark(-1));
