@@ -1,5 +1,6 @@
 body {
   --background: hsl(0, 0%, 100%);
+  --backgroundLowOp: hsla(0, 0%, 100%, 0.9);
   --foreground: hsl(0, 0%, 0%);
 
   --midColor: hsl(0, 0%, 50%);
@@ -17,6 +18,7 @@ body {
 
 body.nightMode {
   --background: hsl(260, 9%, 10%);
+  --backgroundLowOp: hsla(260, 9%, 10%, 0.9);
   --foreground: hsl(260, 4%, 74%);
 
   --midColor: hsl(260, 4%, 30%);
@@ -62,7 +64,6 @@ body {
 }
 
 .item > div {
-  background-color: var(--background);
   background-size: cover; 
   width: 32px; 
   height: 32px;
@@ -74,11 +75,11 @@ body {
   justify-content: end;
   display:flex;
   flex-direction: column;
-  border: 1px solid black;
+  border: 1px solid var(--midColor);
 }
 
 .item > div > span {
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: var(--backgroundLowOp);
 }
 
 *[data-count="-1"]{
