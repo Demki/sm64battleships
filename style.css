@@ -24,8 +24,8 @@ body.nightMode {
 
   --inputBGColor: hsl(260, 9%, 15%);
 
-  --color1: grey;
-  --color3: lightgreen;
+  --color1: black;
+  --color3: yellow;
 }
 
 body {
@@ -37,7 +37,6 @@ body {
   display:grid;
   grid-template-columns: repeat(var(--columns), 1fr);
   grid-auto-rows: 1fr;
-  width: fit-content;
   border: 1px solid var(--midColor);
   resize: both;
   overflow: auto;
@@ -51,7 +50,7 @@ body {
   padding: 2px;
   user-select: none;
   text-align: center;
-  justify-content: middle;
+  justify-content: center;
   display:flex;
   flex-direction: column;
   margin: 1px;
@@ -64,8 +63,18 @@ body {
 
 #board > div > * {
   background-color: var(--background);
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 1.2em;
+  font-weight: bold;
+  -webkit-text-stroke: 1.8px black;
+  -webkit-text-fill-color: white;
   pointer-events: none;
   margin: auto;
+  text-align: center;
+  justify-content: center;
+  display:flex;
+  flex-direction: column;
+  border: 1px solid black;
 }
 
 

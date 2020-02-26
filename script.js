@@ -49,8 +49,8 @@ function htmlToElement(html) {
 
 function shuffle(rand, a) {
   for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(rand() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+    const j = Math.floor(rand() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
 }
@@ -64,10 +64,10 @@ function randomize(rand, orig, list) {
   arr.forEach(x => list.appendChild(x));
 }
 
-function generateId (len) {
+function generateId(len) {
   var arr = new Uint8Array(Math.ceil((len || 40) * 3 / 4));
   window.crypto.getRandomValues(arr);
-  return base64js.fromByteArray(arr).substring(0,len);
+  return base64js.fromByteArray(arr).substring(0, len);
 }
 
 function randFromSeed(seed) {
@@ -76,8 +76,27 @@ function randFromSeed(seed) {
 
 window.addEventListener("load", () => {
   const board = document.getElementById("board");
+  const style = document.createElement("style");
+  document.head.appendChild(style);
+  const sheet = style.sheet;
+  starCounts.forEach(([name,_]) => {
+    sheet.insertRule(`.${name} { background-image: url("img/${name}.png"); background-size: cover; width: 30px; height: 30px; }`,0);
+  });
+
   starList.forEach(x => {
-    board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><span>${x.star} ${x.starNumber}</div></div>`))
+    switch (x.star) {
+      case "BITSKY":
+        board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}">Sky</div></div>`))
+        break;
+      case "BITDW":
+        board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}">DW</div></div>`))
+        break;
+      case "BITFS":
+        board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}">FS</div></div>`))
+        break;
+      default:
+        board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}">${x.starNumber}</div></div>`))
+    }
   })
   board.addEventListener("click", onMark(1));
   board.addEventListener("contextmenu", onMark(-1));
