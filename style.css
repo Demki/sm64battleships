@@ -105,3 +105,7 @@ input {
   color: var(--foreground);
   background-color: var(--buttonBGColor);
 }
+
+.searchHide {
+  opacity: 0.2;
+}

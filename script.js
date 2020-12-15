@@ -87,17 +87,41 @@ function starText({ star, starNumber }) {
   }
 }
 
+function onSearchClear()
+{
+  document.getElementById("searchBox").value = "";
+  onSearch("");
+}
+
+function onSearch(value)
+{
+  const foundLevels = starCounts.filter(([s, _]) => s.search(value.toUpperCase()) !== -1 ).map(([s,_]) => s);
+  for(let x of document.getElementById("board").children)
+  {
+    if(!foundLevels.some(level => x.firstElementChild.classList.contains(level))) 
+    {
+      x.classList.add("searchHide");
+    }
+    else 
+    {
+      x.classList.remove("searchHide");
+    }
+  }
+}
+
 window.addEventListener("load", () => {
   const board = document.getElementById("board");
   const style = document.createElement("style");
   document.head.appendChild(style);
   const sheet = style.sheet;
+  sheet.cssRules
+  
   starCounts.forEach(([name, _]) => {
     sheet.insertRule(`.${name} { background-image: url("img/${name}.png"); }`, 0);
   });
 
   starList.forEach(x => {
-    board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}"><span>${starText(x)}</span></div></div>`))
+    board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}"><span class="${starText(x)}">${starText(x)}</span></div></div>`))
   })
   board.addEventListener("click", onMark(1));
   board.addEventListener("contextmenu", onMark(-1));
@@ -114,6 +138,22 @@ window.addEventListener("load", () => {
     const seed = seedText.value;
     const rand = randFromSeed(seed);
     randomize(rand, orig, board);
+  });
+  
+  document.getElementById("clearSearchBtn").addEventListener("click", () => {
+    onSearchClear();
+  });
+  onSearchClear();
+
+  document.getElementById("searchBox").addEventListener("keyup", ({ target }) => {
+    console.log("here");
+    onSearch(target.value);
+  });
+  document.getElementById("searchBox").addEventListener("change", ({ target }) => {
+    onSearch(target.value);
+  });
+  document.getElementById("searchBox").addEventListener("paste", ({ target }) => {
+    onSearch(target.value);
   });
 
   const colCount = localStorage.getItem("colCount") || 10;
