@@ -116,10 +116,13 @@ window.addEventListener("load", () => {
     randomize(rand, orig, board);
   });
 
-  document.getElementById("colCount").value = 10;
+  const colCount = localStorage.getItem("colCount") || 10;
+  document.getElementById("colCount").value = colCount;
+  document.body.style.setProperty("--columns", colCount);
 
   document.getElementById("colCount").addEventListener("change", ({ target }) => {
     document.body.style.setProperty("--columns", target.value);
+    localStorage.setItem("colCount", target.value);
   });
 
   const nightBtn = document.getElementById("nightBtn");
@@ -128,6 +131,19 @@ window.addEventListener("load", () => {
   nightMode = localStorage.getItem("nightMode") === "true";
   if (nightMode) document.body.classList.add("nightMode");
 
+  const sizeObserver = new MutationObserver(() => 
+  {
+    localStorage.setItem("boardWidth", board.style.width);
+    localStorage.setItem("boardHeight", board.style.height);
+  });
+
+  sizeObserver.observe(board, {attributes: true, attributeFilter: ["style"]});
+
+  if(localStorage.getItem("boardWidth") && localStorage.getItem("boardHeight"))
+  {
+    board.style.setProperty("width", localStorage.getItem("boardWidth"));
+    board.style.setProperty("height", localStorage.getItem("boardHeight"));
+  }
 });
 
 /**

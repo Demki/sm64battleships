@@ -76,9 +76,12 @@ body {
   display:flex;
   flex-direction: column;
   border: 1px solid var(--midColor);
+  font-weight: bold;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .item > div > span {
+  border: 1px solid var(--midColor);
   background-color: var(--backgroundLowOp);
 }
 
