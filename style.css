@@ -27,7 +27,7 @@ body.nightMode {
   --inputBGColor: hsl(260, 9%, 15%);
 
   --color1: hsl(0, 0%, 69%);
-  --color3: yellow;
+  --color3: hsl(300, 70%, 50%);
 }
 
 body {
