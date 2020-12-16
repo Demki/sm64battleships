@@ -184,12 +184,10 @@ window.addEventListener("load", () => {
     board.style.setProperty("height", localStorage.getItem("boardHeight"));
   }
 
-  document.addEventListener("keydown", ( e ) => { 
-    var nodeName = e.target.nodeName;
-    if ( 'INPUT' == nodeName) {
-        return;
+  document.addEventListener("keydown", ( {target:{nodeName}} ) => { 
+    if (nodeName !== 'INPUT') {
+      document.getElementById("searchBox").focus()
     }
-    document.getElementById("searchBox").focus()
   });
 });
 
