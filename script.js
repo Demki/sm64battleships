@@ -146,7 +146,6 @@ window.addEventListener("load", () => {
   onSearchClear();
 
   document.getElementById("searchBox").addEventListener("keyup", ({ target }) => {
-    console.log("here");
     onSearch(target.value);
   });
   document.getElementById("searchBox").addEventListener("change", ({ target }) => {

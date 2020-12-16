@@ -64,6 +64,7 @@ body {
 }
 
 .item > div {
+  position: relative;
   background-size: cover; 
   width: 32px; 
   height: 32px;
@@ -71,16 +72,15 @@ body {
   pointer-events: none;
   margin: auto;
   text-align: right;
-  align-items: end;
-  justify-content: end;
-  display:flex;
-  flex-direction: column;
   border: 1px solid var(--midColor);
   font-weight: bold;
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .item > div > span {
+  position: absolute;
+  right: 0;
+  bottom: 0;
   border: 1px solid var(--midColor);
   background-color: var(--backgroundLowOp);
 }
