@@ -167,7 +167,7 @@ window.addEventListener("load", () => {
   const nightBtn = document.getElementById("nightBtn");
   if (nightBtn) nightBtn.addEventListener("click", toggleNightMode);
 
-  nightMode = localStorage.getItem("nightMode") === "true";
+  nightMode = (localStorage.getItem("nightMode") || "true") === "true";
   if (nightMode) document.body.classList.add("nightMode");
 
   const sizeObserver = new MutationObserver(() => 
