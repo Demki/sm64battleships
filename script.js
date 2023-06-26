@@ -31,8 +31,204 @@ const starCounts = [
 ]
 
 const ITEM_CLASS = "item";
-const MAX_COUNT = 3;
-const MIN_COUNT = -1;
+// const MAX_COUNT = 3;
+// const MIN_COUNT = -1;
+
+const DEFAULT_COLORS = [
+  [-1,"rgba(0,0,255,1)"],
+  [0, "rgba(0,0,0,0)"],
+  [1,"rgba(176, 176, 176,1)"],
+  [2,"rgba(255,0,0,1)"],
+  [3,"rgb(217, 38, 217,1)"]
+];
+
+const colorSettings = {}
+
+function initializeColorSettings() {
+  colorSettings.sheet = new CSSStyleSheet();
+  colorSettings.colors = new Map(JSON.parse(localStorage.getItem("sm64battleship.colors")) || structuredClone(DEFAULT_COLORS));
+  colorSettings.minCount = Math.min(...colorSettings.colors.keys());
+  colorSettings.maxCount = Math.max(...colorSettings.colors.keys());
+  colorSettings.rules = new Map();
+  for(let [k,v] of colorSettings.colors) {
+    const ruleIndex = colorSettings.sheet.insertRule(`
+      *[data-count="${k}"] { 
+       background-color: ${v}; }
+      `);
+    colorSettings.rules.set(k, colorSettings.sheet.cssRules[ruleIndex]);
+  }
+  document.adoptedStyleSheets = [colorSettings.sheet];
+}
+
+function saveColors() {
+  localStorage.setItem("sm64battleship.colors", JSON.stringify([...colorSettings.colors.entries()]));
+}
+
+function resetColors() {
+  localStorage.removeItem("sm64battleship.colors");
+  initializeColorSettings();
+}
+
+function addNegColor() {
+  const k = colorSettings.minCount-1;
+  const v = "#00000000";
+  colorSettings.colors.set(k, v);
+  if(!colorSettings.rules.has(k)) {
+    const ruleIndex = colorSettings.sheet.insertRule(`
+    *[data-count="${k}"] { 
+      background-color: ${v}; }
+      `);
+      colorSettings.rules.set(k, colorSettings.sheet.cssRules[ruleIndex]);
+  }
+  else {
+    colorSettings.rules.get(k).style.backgroundColor = v;
+  }
+  colorSettings.minCount = k;
+  return [k,v];
+}
+
+function removeNegColor() {
+  if(colorSettings.minCount < -1) {
+    colorSettings.colors.delete(colorSettings.minCount);
+    colorSettings.rules.get(colorSettings.minCount).style.backgorundColor = "#00000000";
+    colorSettings.minCount++;
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+function addPosColor() {
+  const k = colorSettings.maxCount+1;
+  const v = "#00000000";
+  colorSettings.colors.set(k, v);
+  if(!colorSettings.rules.has(k)) {
+    const ruleIndex = colorSettings.sheet.insertRule(`
+    *[data-count="${k}"] { 
+      background-color: ${v}; }
+      `);
+      colorSettings.rules.set(k, colorSettings.sheet.cssRules[ruleIndex]);
+  }
+  else {
+    colorSettings.rules.get(k).style.backgroundColor = v;
+  }
+  colorSettings.maxCount = k;
+  return [k,v];
+}
+
+function removePosColor() {
+  if(colorSettings.maxCount > 1) {
+    colorSettings.colors.delete(colorSettings.maxCount);
+    colorSettings.rules.get(colorSettings.maxCount).style.backgorundColor = "#00000000";
+    colorSettings.maxCount--;
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function setColor(k, v) {
+  colorSettings.colors.set(k, v);
+  colorSettings.rules.get(k).style.backgroundColor = v;
+}
+
+function createPicker(k, v) {
+  const div = document.createElement("div");
+  div.classList.add("colorsPickerRow");
+  const label = document.createElement("label");
+  label.for = `color${k}ColorPicker`;
+  label.innerText = k;
+  const picker = document.createElement("input");
+  picker.id = `color${k}ColorPicker`;
+  div.append(label, picker);
+  picker.jscolor = new JSColor(picker,{preset: 'dark'});
+  picker.jscolor.fromString(v);
+  picker.addEventListener("input", () => {
+    setColor(k, picker.jscolor.toHEXString());
+    saveColors();
+  })
+  return div;
+}
+
+function genColorsPickerHTML(pickerDiv) {
+  {
+    const div = document.createElement("div");
+    const btn = document.createElement("input");
+    btn.type = "button";
+    btn.value = "reset colors";
+    div.append(btn);
+    pickerDiv.append(div);
+
+    btn.addEventListener("click", () => {
+      resetColors();
+      while(pickerDiv.firstChild) {
+        pickerDiv.removeChild(pickerDiv.lastChild);
+      }
+      genColorsPickerHTML(pickerDiv);
+    });
+  }
+  
+  {
+    const div = document.createElement("div");
+    const btnP = document.createElement("input");
+    btnP.type = "button";
+    btnP.value = "+";
+    btnP.classList.add("addRemoveBtn");
+    const btnM = document.createElement("input");
+    btnM.type = "button";
+    btnM.value = "-";
+    btnM.classList.add("addRemoveBtn");
+    div.append(btnP,btnM);
+    pickerDiv.append(div);
+
+    btnM.addEventListener("click", () => {
+      if(removeNegColor())
+      {
+        saveColors();
+        pickerDiv.removeChild(div.nextSibling);
+      }
+    });
+    btnP.addEventListener("click", () => {
+      const [k,v] = addNegColor();
+      saveColors();
+      pickerDiv.insertBefore(createPicker(k,v), div.nextSibling);
+    });
+  }
+  const colors = [...colorSettings.colors.entries()];
+  colors.sort(([x,_],[y,__]) => x-y);
+  for(let [k,v] of colors) {
+    if(k === 0) continue;
+    pickerDiv.append(createPicker(k,v));
+  }
+
+  {
+    const div = document.createElement("div");
+    const btnP = document.createElement("input");
+    btnP.type = "button";
+    btnP.value = "+";
+    btnP.classList.add("addRemoveBtn");
+    const btnM = document.createElement("input");
+    btnM.type = "button";
+    btnM.value = "-";
+    btnM.classList.add("addRemoveBtn");
+    div.append(btnP,btnM);
+    pickerDiv.append(div);
+
+    btnM.addEventListener("click", () => {
+      if(removePosColor())
+      {
+        saveColors();
+        pickerDiv.removeChild(div.previousSibling);
+      }
+    });
+    btnP.addEventListener("click", () => {
+      const [k,v] = addPosColor();
+      saveColors();
+      pickerDiv.insertBefore(createPicker(k,v), div);
+    });
+  }
+}
 
 function starsFor([name, count]) {
   return Array.from({ length: count }, (_, i) => ({ star: name, starNumber: i + 1 }));
@@ -114,7 +310,10 @@ window.addEventListener("load", () => {
   const style = document.createElement("style");
   document.head.appendChild(style);
   const sheet = style.sheet;
-  sheet.cssRules
+
+  initializeColorSettings();
+  const colorsPickerDiv = document.getElementById("colorsPicker");
+  genColorsPickerHTML(colorsPickerDiv);
   
   starCounts.forEach(([name, _]) => {
     sheet.insertRule(`.${name} { background-image: url("img/${name}.png"); }`, 0);
@@ -213,7 +412,8 @@ function onMark(c) {
 function mark(c, target) {
   if (!("count" in target.dataset)) target.dataset.count = 0;
   const cnt = parseInt(target.dataset.count);
-  if ((c > 0 && cnt < MAX_COUNT) || (c < 0 && cnt > MIN_COUNT)) {
+  
+  if ((c > 0 && cnt < colorSettings.maxCount) || (c < 0 && cnt > colorSettings.minCount)) {
     target.dataset.count = cnt + c;
   }
 }

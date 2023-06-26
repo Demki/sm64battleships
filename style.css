@@ -9,11 +9,6 @@ body {
   --inputBGColor: hsl(0, 0%, 88%);
 
   --columns: 10;
-
-  --color-1: blue;
-  --color1: black;
-  --color2: red;
-  --color3: green;
 }
 
 body.nightMode {
@@ -25,9 +20,6 @@ body.nightMode {
   --hoverColor: hsl(240, 50%, 50%);
 
   --inputBGColor: hsl(260, 9%, 15%);
-
-  --color1: hsl(0, 0%, 69%);
-  --color3: hsl(300, 70%, 50%);
 }
 
 body {
@@ -85,21 +77,6 @@ body {
   background-color: var(--backgroundLowOp);
 }
 
-*[data-count="-1"]{
-  background-color: var(--color-1);
-}
-
-*[data-count="1"]{
-  background-color: var(--color1);
-}
-
-*[data-count="2"]{
-  background-color: var(--color2);
-}
-
-*[data-count="3"]{
-  background-color: var(--color3);
-}
 
 input {
   color: var(--foreground);
@@ -108,4 +85,19 @@ input {
 
 .searchHide {
   opacity: 0.2;
+}
+
+.addRemoveBtn {
+  width: 20px;
+}
+
+#colorsPicker {
+  margin-top:5px;
+  border: 1px solid var(--midColor);
+}
+
+.colorsPickerRow > label {
+  display:inline-block;
+  width: 30px;
+  text-align: center;;
 }
