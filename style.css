@@ -93,11 +93,16 @@ input {
 
 #colorsPicker {
   margin-top:5px;
-  border: 1px solid var(--midColor);
+  padding-left: 10px;
+  border-left: 1px solid var(--midColor);
 }
 
 .colorsPickerRow > label {
   display:inline-block;
   width: 30px;
   text-align: center;;
+}
+
+.hidden {
+  display: none;
 }

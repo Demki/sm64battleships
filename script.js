@@ -44,6 +44,9 @@ const DEFAULT_COLORS = [
 
 const colorSettings = {}
 
+let nightMode = false;
+let colorPickerVisible = false;
+
 function initializeColorSettings() {
   colorSettings.sheet = new CSSStyleSheet();
   colorSettings.colors = new Map(JSON.parse(localStorage.getItem("sm64battleship.colors")) || structuredClone(DEFAULT_COLORS));
@@ -311,10 +314,6 @@ window.addEventListener("load", () => {
   document.head.appendChild(style);
   const sheet = style.sheet;
 
-  initializeColorSettings();
-  const colorsPickerDiv = document.getElementById("colorsPicker");
-  genColorsPickerHTML(colorsPickerDiv);
-  
   starCounts.forEach(([name, _]) => {
     sheet.insertRule(`.${name} { background-image: url("img/${name}.png"); }`, 0);
   });
@@ -369,6 +368,16 @@ window.addEventListener("load", () => {
   nightMode = (localStorage.getItem("nightMode") || "true") === "true";
   if (nightMode) document.body.classList.add("nightMode");
 
+  const colorPickerBtn = document.getElementById("colorPickerBtn");
+  if (colorPickerBtn) colorPickerBtn.addEventListener("click", toggleColorPicker);
+
+  colorPickerVisible = localStorage.getItem("sm64battleships.colorPickerVisible") === "true";
+  if (colorPickerVisible) document.getElementById("colorsPicker").classList.remove("hidden");
+
+  initializeColorSettings();
+  const colorsPickerDiv = document.getElementById("colorsPicker");
+  genColorsPickerHTML(colorsPickerDiv);
+
   const sizeObserver = new MutationObserver(() => 
   {
     localStorage.setItem("boardWidth", board.style.width);
@@ -388,6 +397,7 @@ window.addEventListener("load", () => {
       document.getElementById("searchBox").focus()
     }
   });
+  
 });
 
 /**
@@ -418,7 +428,6 @@ function mark(c, target) {
   }
 }
 
-let nightMode = false;
 
 function toggleNightMode() {
   if (nightMode) {
@@ -430,5 +439,18 @@ function toggleNightMode() {
     nightMode = true;
     localStorage.setItem("nightMode", nightMode);
     document.body.classList.add("nightMode");
+  }
+}
+
+function toggleColorPicker() {
+  if (colorPickerVisible) {
+    colorPickerVisible = false;
+    localStorage.setItem("sm64battleships.colorPickerVisible", colorPickerVisible);
+    document.getElementById("colorsPicker").classList.add("hidden")
+  }
+  else {
+    colorPickerVisible = true;
+    localStorage.setItem("sm64battleships.colorPickerVisible", colorPickerVisible);
+    document.getElementById("colorsPicker").classList.remove("hidden")
   }
 }
