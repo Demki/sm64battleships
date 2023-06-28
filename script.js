@@ -44,8 +44,17 @@ const DEFAULT_COLORS = [
 
 const colorSettings = {}
 
+const starDivs = new Map();
+
 let nightMode = false;
 let colorPickerVisible = false;
+
+function starsFor([name, count]) {
+  return Array.from({ length: count }, (_, i) => ({ star: name, starNumber: i + 1 }));
+}
+
+const starList = starCounts.flatMap(starsFor);
+
 
 function initializeColorSettings() {
   colorSettings.sheet = new CSSStyleSheet();
@@ -233,11 +242,39 @@ function genColorsPickerHTML(pickerDiv) {
   }
 }
 
-function starsFor([name, count]) {
-  return Array.from({ length: count }, (_, i) => ({ star: name, starNumber: i + 1 }));
+function saveMarkings() {
+  const data = [...starDivs.entries()].flatMap(([i,d]) => "count" in d.dataset ? [[i,d.dataset.count]] : []);
+  const file = new Blob([JSON.stringify(data)], { type: "application/json" });
+  const a = document.createElement("a");
+
+  a.href = URL.createObjectURL(file);
+  a.download = "sm64battleships-markings.json";
+  a.click();
 }
 
-const starList = starCounts.flatMap(starsFor);
+function loadMarkings() {
+  const markingsFile = document.getElementById("markingsFile");
+  if(markingsFile.files.length === 0) {
+    alert("No files selected.");
+    return;
+  }
+  const file = markingsFile.files[0];
+  const reader = new FileReader();
+  reader.addEventListener("load", (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const map = new Map(data);
+      for(let [i, m] of map) {
+        starDivs.get(i).dataset.count = m;
+      }
+    } catch(e) {
+      alert(`Could not read file because of:\n${e.message}`);
+      console.log("Could not read file", e);
+    }
+  });
+  reader.readAsText(file);
+
+}
 
 function htmlToElement(html) {
   var template = document.createElement('template');
@@ -318,9 +355,11 @@ window.addEventListener("load", () => {
     sheet.insertRule(`.${name} { background-image: url("img/${name}.png"); }`, 0);
   });
 
-  starList.forEach(x => {
-    board.appendChild(htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}"><span class="${starText(x)}">${starText(x)}</span></div></div>`))
-  })
+  starList.forEach((x,i) => {
+    const div = htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}"><span class="${starText(x)}">${starText(x)}</span></div></div>`);
+    board.appendChild(div);
+    starDivs.set(i, div);
+  });
   board.addEventListener("click", onMark(1));
   board.addEventListener("contextmenu", onMark(-1));
 
@@ -392,6 +431,12 @@ window.addEventListener("load", () => {
     board.style.setProperty("height", localStorage.getItem("boardHeight"));
   }
 
+  const loadMarkingsBtn = document.getElementById("loadMarkingsBtn");
+  if (loadMarkingsBtn) loadMarkingsBtn.addEventListener("click", loadMarkings);
+
+  const saveMarkingsBtn = document.getElementById("saveMarkingsBtn");
+  if (saveMarkingsBtn) saveMarkingsBtn.addEventListener("click", saveMarkings);
+
   document.addEventListener("keydown", ( {target:{nodeName}} ) => { 
     if (nodeName !== 'INPUT') {
       document.getElementById("searchBox").focus()
@@ -452,5 +497,6 @@ function toggleColorPicker() {
     colorPickerVisible = true;
     localStorage.setItem("sm64battleships.colorPickerVisible", colorPickerVisible);
     document.getElementById("colorsPicker").classList.remove("hidden")
+    document.getElementById("colorsPicker").scrollIntoView();
   }
 }
