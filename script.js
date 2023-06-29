@@ -243,7 +243,7 @@ function genColorsPickerHTML(pickerDiv) {
 }
 
 function saveMarkings() {
-  const data = [...starDivs.entries()].flatMap(([i,d]) => "count" in d.dataset ? [[i,d.dataset.count]] : []);
+  const data = [...starDivs.entries()].flatMap(([i,d]) => "count" in d.dataset && d.dataset.count !== "0" ? [[i,d.dataset.count]] : []);
   const file = new Blob([JSON.stringify(data)], { type: "application/json" });
   const a = document.createElement("a");
 
