@@ -243,7 +243,7 @@ function genColorsPickerHTML(pickerDiv) {
 }
 
 function saveMarkings() {
-  const data = [...starDivs.entries()].flatMap(([i,d]) => "count" in d.dataset && d.dataset.count !== "0" ? [[i,d.dataset.count]] : []);
+  const data = [...starDivs.entries()].map(([i,d]) => [i,Number.parseInt(d.dataset.count) || 0]);
   const file = new Blob([JSON.stringify(data)], { type: "application/json" });
   const a = document.createElement("a");
 
@@ -466,7 +466,7 @@ function onMark(c) {
  */
 function mark(c, target) {
   if (!("count" in target.dataset)) target.dataset.count = 0;
-  const cnt = parseInt(target.dataset.count);
+  const cnt = Number.parseInt(target.dataset.count);
   
   if ((c > 0 && cnt < colorSettings.maxCount) || (c < 0 && cnt > colorSettings.minCount)) {
     target.dataset.count = cnt + c;
