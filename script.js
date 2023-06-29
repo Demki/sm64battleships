@@ -437,9 +437,12 @@ window.addEventListener("load", () => {
   const saveMarkingsBtn = document.getElementById("saveMarkingsBtn");
   if (saveMarkingsBtn) saveMarkingsBtn.addEventListener("click", saveMarkings);
 
-  document.addEventListener("keydown", ( {target:{nodeName}} ) => { 
+  document.addEventListener("keydown", ( {target, target:{nodeName}, code} ) => { 
+    if (code === "Escape") {
+      onSearchClear();
+    }
     if (nodeName !== 'INPUT') {
-      document.getElementById("searchBox").focus()
+      document.getElementById("searchBox").focus();
     }
   });
   
