@@ -28,21 +28,21 @@ const starCounts = [
   ["BITSKY", 1],
   ["TOAD", 3],
   ["MIPS", 2],
-]
+];
 
 const ITEM_CLASS = "item";
 // const MAX_COUNT = 3;
 // const MIN_COUNT = -1;
 
 const DEFAULT_COLORS = [
-  [-1,"rgba(0,0,255,1)"],
+  [-1, "rgba(0,0,255,1)"],
   [0, "rgba(0,0,0,0)"],
-  [1,"rgba(176, 176, 176,1)"],
-  [2,"rgba(255,0,0,1)"],
-  [3,"rgb(217, 38, 217,1)"]
+  [1, "rgba(176, 176, 176,1)"],
+  [2, "rgba(255,0,0,1)"],
+  [3, "rgb(217, 38, 217,1)"]
 ];
 
-const colorSettings = {}
+const colorSettings = {};
 
 const starDivs = new Map();
 
@@ -62,7 +62,7 @@ function initializeColorSettings() {
   colorSettings.minCount = Math.min(...colorSettings.colors.keys());
   colorSettings.maxCount = Math.max(...colorSettings.colors.keys());
   colorSettings.rules = new Map();
-  for(let [k,v] of colorSettings.colors) {
+  for (let [k, v] of colorSettings.colors) {
     const ruleIndex = colorSettings.sheet.insertRule(`
       *[data-count="${k}"] { 
        background-color: ${v}; }
@@ -82,25 +82,25 @@ function resetColors() {
 }
 
 function addNegColor() {
-  const k = colorSettings.minCount-1;
+  const k = colorSettings.minCount - 1;
   const v = "#00000000";
   colorSettings.colors.set(k, v);
-  if(!colorSettings.rules.has(k)) {
+  if (!colorSettings.rules.has(k)) {
     const ruleIndex = colorSettings.sheet.insertRule(`
     *[data-count="${k}"] { 
       background-color: ${v}; }
       `);
-      colorSettings.rules.set(k, colorSettings.sheet.cssRules[ruleIndex]);
+    colorSettings.rules.set(k, colorSettings.sheet.cssRules[ruleIndex]);
   }
   else {
     colorSettings.rules.get(k).style.backgroundColor = v;
   }
   colorSettings.minCount = k;
-  return [k,v];
+  return [k, v];
 }
 
 function removeNegColor() {
-  if(colorSettings.minCount < -1) {
+  if (colorSettings.minCount < -1) {
     colorSettings.colors.delete(colorSettings.minCount);
     colorSettings.rules.get(colorSettings.minCount).style.backgorundColor = "#00000000";
     colorSettings.minCount++;
@@ -112,25 +112,25 @@ function removeNegColor() {
 }
 
 function addPosColor() {
-  const k = colorSettings.maxCount+1;
+  const k = colorSettings.maxCount + 1;
   const v = "#00000000";
   colorSettings.colors.set(k, v);
-  if(!colorSettings.rules.has(k)) {
+  if (!colorSettings.rules.has(k)) {
     const ruleIndex = colorSettings.sheet.insertRule(`
     *[data-count="${k}"] { 
       background-color: ${v}; }
       `);
-      colorSettings.rules.set(k, colorSettings.sheet.cssRules[ruleIndex]);
+    colorSettings.rules.set(k, colorSettings.sheet.cssRules[ruleIndex]);
   }
   else {
     colorSettings.rules.get(k).style.backgroundColor = v;
   }
   colorSettings.maxCount = k;
-  return [k,v];
+  return [k, v];
 }
 
 function removePosColor() {
-  if(colorSettings.maxCount > 1) {
+  if (colorSettings.maxCount > 1) {
     colorSettings.colors.delete(colorSettings.maxCount);
     colorSettings.rules.get(colorSettings.maxCount).style.backgorundColor = "#00000000";
     colorSettings.maxCount--;
@@ -154,12 +154,12 @@ function createPicker(k, v) {
   const picker = document.createElement("input");
   picker.id = `color${k}ColorPicker`;
   div.append(label, picker);
-  picker.jscolor = new JSColor(picker,{preset: 'dark'});
+  picker.jscolor = new JSColor(picker, { preset: 'dark' });
   picker.jscolor.fromString(v);
   picker.addEventListener("input", () => {
     setColor(k, picker.jscolor.toHEXString());
     saveColors();
-  })
+  });
   return div;
 }
 
@@ -174,13 +174,13 @@ function genColorsPickerHTML(pickerDiv) {
 
     btn.addEventListener("click", () => {
       resetColors();
-      while(pickerDiv.firstChild) {
+      while (pickerDiv.firstChild) {
         pickerDiv.removeChild(pickerDiv.lastChild);
       }
       genColorsPickerHTML(pickerDiv);
     });
   }
-  
+
   {
     const div = document.createElement("div");
     const btnP = document.createElement("input");
@@ -191,27 +191,26 @@ function genColorsPickerHTML(pickerDiv) {
     btnM.type = "button";
     btnM.value = "-";
     btnM.classList.add("addRemoveBtn");
-    div.append(btnP,btnM);
+    div.append(btnP, btnM);
     pickerDiv.append(div);
 
     btnM.addEventListener("click", () => {
-      if(removeNegColor())
-      {
+      if (removeNegColor()) {
         saveColors();
         pickerDiv.removeChild(div.nextSibling);
       }
     });
     btnP.addEventListener("click", () => {
-      const [k,v] = addNegColor();
+      const [k, v] = addNegColor();
       saveColors();
-      pickerDiv.insertBefore(createPicker(k,v), div.nextSibling);
+      pickerDiv.insertBefore(createPicker(k, v), div.nextSibling);
     });
   }
   const colors = [...colorSettings.colors.entries()];
-  colors.sort(([x,_],[y,__]) => x-y);
-  for(let [k,v] of colors) {
-    if(k === 0) continue;
-    pickerDiv.append(createPicker(k,v));
+  colors.sort(([x, _], [y, __]) => x - y);
+  for (let [k, v] of colors) {
+    if (k === 0) continue;
+    pickerDiv.append(createPicker(k, v));
   }
 
   {
@@ -224,26 +223,25 @@ function genColorsPickerHTML(pickerDiv) {
     btnM.type = "button";
     btnM.value = "-";
     btnM.classList.add("addRemoveBtn");
-    div.append(btnP,btnM);
+    div.append(btnP, btnM);
     pickerDiv.append(div);
 
     btnM.addEventListener("click", () => {
-      if(removePosColor())
-      {
+      if (removePosColor()) {
         saveColors();
         pickerDiv.removeChild(div.previousSibling);
       }
     });
     btnP.addEventListener("click", () => {
-      const [k,v] = addPosColor();
+      const [k, v] = addPosColor();
       saveColors();
-      pickerDiv.insertBefore(createPicker(k,v), div);
+      pickerDiv.insertBefore(createPicker(k, v), div);
     });
   }
 }
 
 function saveMarkings() {
-  const data = [...starDivs.entries()].map(([i,d]) => [i,Number.parseInt(d.dataset.count) || 0]);
+  const data = [...starDivs.entries()].map(([i, d]) => [i, Number.parseInt(d.dataset.count) || 0]);
   const file = new Blob([JSON.stringify(data)], { type: "application/json" });
   const a = document.createElement("a");
 
@@ -254,7 +252,7 @@ function saveMarkings() {
 
 function loadMarkings() {
   const markingsFile = document.getElementById("markingsFile");
-  if(markingsFile.files.length === 0) {
+  if (markingsFile.files.length === 0) {
     alert("No files selected.");
     return;
   }
@@ -264,10 +262,10 @@ function loadMarkings() {
     try {
       const data = JSON.parse(ev.target.result);
       const map = new Map(data);
-      for(let [i, m] of map) {
+      for (let [i, m] of map) {
         starDivs.get(i).dataset.count = m;
       }
-    } catch(e) {
+    } catch (e) {
       alert(`Could not read file because of:\n${e.message}`);
       console.log("Could not read file", e);
     }
@@ -323,23 +321,18 @@ function starText({ star, starNumber }) {
   }
 }
 
-function onSearchClear()
-{
+function onSearchClear() {
   document.getElementById("searchBox").value = "";
   onSearch("");
 }
 
-function onSearch(value)
-{
-  const foundLevels = starCounts.filter(([s, _]) => s.search(value.toUpperCase()) !== -1 ).map(([s,_]) => s);
-  for(let x of document.getElementById("board").children)
-  {
-    if(!foundLevels.some(level => x.firstElementChild.classList.contains(level))) 
-    {
+function onSearch(value) {
+  const foundLevels = starCounts.filter(([s, _]) => s.search(value.toUpperCase()) !== -1).map(([s, _]) => s);
+  for (let x of document.getElementById("board").children) {
+    if (!foundLevels.some(level => x.firstElementChild.classList.contains(level))) {
       x.classList.add("searchHide");
     }
-    else 
-    {
+    else {
       x.classList.remove("searchHide");
     }
   }
@@ -355,7 +348,7 @@ window.addEventListener("load", () => {
     sheet.insertRule(`.${name} { background-image: url("img/${name}.png"); }`, 0);
   });
 
-  starList.forEach((x,i) => {
+  starList.forEach((x, i) => {
     const div = htmlToElement(`<div class="${ITEM_CLASS}"><div class="${x.star}"><span class="${starText(x)}">${starText(x)}</span></div></div>`);
     board.appendChild(div);
     starDivs.set(i, div);
@@ -366,7 +359,7 @@ window.addEventListener("load", () => {
   const seedText = document.getElementById("seedText");
   const orig = Array.from(board.children);
   document.getElementById("genSeedButton").addEventListener("click", () => {
-    const seed = generateId(10)
+    const seed = generateId(10);
     const rng = randFromSeed(seed);
     seedText.value = seed;
     randomize(rng, orig, board);
@@ -376,7 +369,7 @@ window.addEventListener("load", () => {
     const rand = randFromSeed(seed);
     randomize(rand, orig, board);
   });
-  
+
   document.getElementById("clearSearchBtn").addEventListener("click", () => {
     onSearchClear();
   });
@@ -417,16 +410,14 @@ window.addEventListener("load", () => {
   const colorsPickerDiv = document.getElementById("colorsPicker");
   genColorsPickerHTML(colorsPickerDiv);
 
-  const sizeObserver = new MutationObserver(() => 
-  {
+  const sizeObserver = new MutationObserver(() => {
     localStorage.setItem("boardWidth", board.style.width);
     localStorage.setItem("boardHeight", board.style.height);
   });
 
-  sizeObserver.observe(board, {attributes: true, attributeFilter: ["style"]});
+  sizeObserver.observe(board, { attributes: true, attributeFilter: ["style"] });
 
-  if(localStorage.getItem("boardWidth") && localStorage.getItem("boardHeight"))
-  {
+  if (localStorage.getItem("boardWidth") && localStorage.getItem("boardHeight")) {
     board.style.setProperty("width", localStorage.getItem("boardWidth"));
     board.style.setProperty("height", localStorage.getItem("boardHeight"));
   }
@@ -437,7 +428,7 @@ window.addEventListener("load", () => {
   const saveMarkingsBtn = document.getElementById("saveMarkingsBtn");
   if (saveMarkingsBtn) saveMarkingsBtn.addEventListener("click", saveMarkings);
 
-  document.addEventListener("keydown", ( {target, target:{nodeName}, code} ) => { 
+  document.addEventListener("keydown", ({ target, target: { nodeName }, code }) => {
     if (code === "Escape") {
       onSearchClear();
     }
@@ -445,7 +436,7 @@ window.addEventListener("load", () => {
       document.getElementById("searchBox").focus();
     }
   });
-  
+
 });
 
 /**
@@ -460,7 +451,7 @@ function onMark(c) {
       return false;
 
     }
-  }
+  };
 }
 
 /**
@@ -470,7 +461,7 @@ function onMark(c) {
 function mark(c, target) {
   if (!("count" in target.dataset)) target.dataset.count = 0;
   const cnt = Number.parseInt(target.dataset.count);
-  
+
   if ((c > 0 && cnt < colorSettings.maxCount) || (c < 0 && cnt > colorSettings.minCount)) {
     target.dataset.count = cnt + c;
   }
@@ -494,12 +485,12 @@ function toggleColorPicker() {
   if (colorPickerVisible) {
     colorPickerVisible = false;
     localStorage.setItem("sm64battleships.colorPickerVisible", colorPickerVisible);
-    document.getElementById("colorsPicker").classList.add("hidden")
+    document.getElementById("colorsPicker").classList.add("hidden");
   }
   else {
     colorPickerVisible = true;
     localStorage.setItem("sm64battleships.colorPickerVisible", colorPickerVisible);
-    document.getElementById("colorsPicker").classList.remove("hidden")
+    document.getElementById("colorsPicker").classList.remove("hidden");
     document.getElementById("colorsPicker").scrollIntoView();
   }
 }
